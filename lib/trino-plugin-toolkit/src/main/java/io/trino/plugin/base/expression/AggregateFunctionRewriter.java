@@ -66,9 +66,11 @@ public final class AggregateFunctionRewriter<Result>
         };
 
         for (AggregateFunctionRule<Result> rule : rules) {
+            // TODO 判断是否满足规则
             Iterator<Match> matches = rule.getPattern().match(aggregateFunction, context).iterator();
             while (matches.hasNext()) {
                 Match match = matches.next();
+                // TODO io.trino.plugin.mysql.ImplementAvgBigint.rewrite
                 Optional<Result> rewritten = rule.rewrite(aggregateFunction, match.captures(), context);
                 if (rewritten.isPresent()) {
                     return rewritten;

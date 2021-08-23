@@ -112,6 +112,7 @@ public class PushAggregationIntoTableScan
     @Override
     public Result apply(AggregationNode node, Captures captures, Context context)
     {
+        // TODO 聚合下推
         return pushAggregationIntoTableScan(metadata, context, node, captures.get(TABLE_SCAN), node.getAggregations(), node.getGroupingSets().getGroupingKeys())
                 .map(Rule.Result::ofPlanNode)
                 .orElseGet(Rule.Result::empty);
@@ -146,6 +147,8 @@ public class PushAggregationIntoTableScan
                 .map(groupByColumn -> assignments.get(groupByColumn.getName()))
                 .collect(toImmutableList());
 
+        // TODO 聚合下推(以MySQL聚合下推为例)：MetadataManager#applyAggregation -> DefaultJdbcMetadata.applyAggregation -> MySqlClient.implementAggregation -> AggregateFunctionRewriter#rewrite
+        //  -> io.trino.plugin.mysql.ImplementAvgBigint#rewrite
         Optional<AggregationApplicationResult<TableHandle>> aggregationPushdownResult = metadata.applyAggregation(
                 context.getSession(),
                 tableScan.getTable(),

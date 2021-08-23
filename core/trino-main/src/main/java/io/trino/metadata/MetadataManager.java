@@ -1547,6 +1547,8 @@ public final class MetadataManager
         }
 
         ConnectorSession connectorSession = session.toConnectorSession(catalogName);
+        // TODO 以MySql聚合下推为例: DefaultJdbcMetadata.applyAggregation -> MySqlClient.implementAggregation -> AggregateFunctionRewriter#rewrite
+        //  -> io.trino.plugin.mysql.ImplementAvgBigint#rewrite
         return metadata.applyAggregation(connectorSession, table.getConnectorHandle(), aggregations, assignments, groupingSets)
                 .map(result -> {
                     verifyProjection(table, result.getProjections(), result.getAssignments(), aggregations.size());

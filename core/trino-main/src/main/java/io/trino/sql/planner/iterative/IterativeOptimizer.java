@@ -95,6 +95,7 @@ public class IterativeOptimizer
         // only disable new rules if we have legacy rules to fall back to
         if (useLegacyRules.test(session) && !legacyRules.isEmpty()) {
             for (PlanOptimizer optimizer : legacyRules) {
+                // TODO 旧版本的规则优化器
                 plan = optimizer.optimize(plan, session, symbolAllocator.getTypes(), symbolAllocator, idAllocator, warningCollector);
             }
 
@@ -106,6 +107,7 @@ public class IterativeOptimizer
 
         Duration timeout = SystemSessionProperties.getOptimizerTimeout(session);
         Context context = new Context(memo, lookup, idAllocator, symbolAllocator, System.nanoTime(), timeout.toMillis(), session, warningCollector);
+        // TODO 执行带条件的RBO
         exploreGroup(memo.getRootGroup(), context);
 
         return memo.extract();
@@ -121,8 +123,10 @@ public class IterativeOptimizer
     {
         // tracks whether this group or any children groups change as
         // this method executes
+        // TODO 应用优化器
         boolean progress = exploreNode(group, context);
 
+        // TODO 子节点也执行优化策略
         while (exploreChildren(group, context)) {
             progress = true;
 
@@ -149,6 +153,7 @@ public class IterativeOptimizer
 
             done = true;
             Iterator<Rule<?>> possiblyMatchingRules = ruleIndex.getCandidates(node).iterator();
+            // TODO 执行规则优化器
             while (possiblyMatchingRules.hasNext()) {
                 Rule<?> rule = possiblyMatchingRules.next();
 
@@ -156,6 +161,7 @@ public class IterativeOptimizer
                     continue;
                 }
 
+                // TODO 使用优化器改写执行计划，下推聚合算子、谓词条件等
                 Rule.Result result = transform(node, rule, context);
 
                 if (result.getTransformedPlan().isPresent()) {
@@ -181,6 +187,7 @@ public class IterativeOptimizer
             Rule.Result result;
             try {
                 long start = System.nanoTime();
+                // TODO PushLimitIntoTableScan.apply / PushAggregationIntoTableScan#apply等
                 result = rule.apply(match.capture(nodeCapture), match.captures(), ruleContext(context));
 
                 if (LOG.isDebugEnabled() && !result.isEmpty()) {

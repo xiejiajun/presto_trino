@@ -173,6 +173,7 @@ public class MySqlClient
     public Optional<JdbcExpression> implementAggregation(ConnectorSession session, AggregateFunction aggregate, Map<String, ColumnHandle> assignments)
     {
         // TODO support complex ConnectorExpressions
+        //  AggregateFunctionRewriter#rewrite
         return aggregateFunctionRewriter.rewrite(session, aggregate, assignments);
     }
 

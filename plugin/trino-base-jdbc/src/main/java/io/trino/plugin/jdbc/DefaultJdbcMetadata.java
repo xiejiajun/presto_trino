@@ -264,6 +264,7 @@ public class DefaultJdbcMetadata
         ImmutableList.Builder<Assignment> resultAssignments = ImmutableList.builder();
         ImmutableMap.Builder<String, String> expressions = ImmutableMap.builder();
         for (AggregateFunction aggregate : aggregates) {
+            // TODO MySqlClient.implementAggregation
             Optional<JdbcExpression> expression = jdbcClient.implementAggregation(session, aggregate, assignments);
             if (expression.isEmpty()) {
                 return Optional.empty();
